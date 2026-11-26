@@ -1,0 +1,15 @@
+# Local secrets & environment (NEVER commit real IPs or keys)
+.env
+.env.local
+app-side/config.js
+
+# Dependencies & build artifacts
+node_modules/
+dist/
+*.zab
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+Thumbs.db

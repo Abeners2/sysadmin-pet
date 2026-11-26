@@ -1,0 +1,53 @@
+{
+  "configVersion": "v3",
+  "app": {
+    "appId": 1029384,
+    "appName": "SysAdmin Pet",
+    "appType": "app",
+    "version": {
+      "code": 1,
+      "name": "1.0.0"
+    },
+    "icon": "icon.png",
+    "vender": "SysAdmin",
+    "description": "Tamagotchi monitor de recursos OCI"
+  },
+  "permissions": [
+    "device:os.bg_service",
+    "device:os.network"
+  ],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "3.0.0",
+      "target": "3.0.0",
+      "minVersion": "3.0.0"
+    }
+  },
+  "targets": {
+    "trex3": {
+      "module": {
+        "page": {
+          "pages": [
+            "page/index.page"
+          ]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        }
+      },
+      "platforms": [
+        {
+          "st": "r",
+          "dw": 480
+        }
+      ],
+      "designWidth": 480
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "SysAdmin Pet"
+    }
+  },
+  "defaultLanguage": "en-US"
+}

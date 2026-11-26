@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "oci-micro-vm"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["YOUR_OCI_VM_PUBLIC_IP:80"]
+        labels:
+          instance: "oci-e2-micro"
+          env: "production"
