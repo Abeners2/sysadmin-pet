@@ -44,7 +44,8 @@ Page(
       swapSideText: null,
       stateBannerWidget: null,
       primaryMetricsWidget: null,
-      topProcTextWidget: null
+      topProcTextWidget: null,
+      footerLabelWidget: null
     },
 
     onInit() {
@@ -235,7 +236,7 @@ Page(
         align_h: align.CENTER_H,
         align_v: align.CENTER_V,
         text_style: text_style.NONE,
-        text: 'SINCRONIZANDO OCI...'
+        text: 'SINCRONIZANDO...'
       })
 
       this.state.primaryMetricsWidget = createWidget(widget.TEXT, {
@@ -274,8 +275,8 @@ Page(
         text: 'TOP: analisando...'
       })
 
-      // Rodapé com IP da instância OCI
-      createWidget(widget.TEXT, {
+      // Rodapé dinâmico (configurável pelo app Zepp no celular)
+      this.state.footerLabelWidget = createWidget(widget.TEXT, {
         x: px(120),
         y: px(404),
         w: px(240),
@@ -328,7 +329,9 @@ Page(
           ping: 0,
           uptime: 'OFFLINE',
           ram_mb: '0/0M',
-          top: 'sem conexão'
+          top: 'sem conexão',
+          label: (data && data.label) || 'OCI • E2.1.Micro',
+          mode: (data && data.mode) || 'agent'
         }
       }
 
@@ -339,6 +342,8 @@ Page(
       const rx_kbs = Number(data.rx_kbs) || 0
       const tx_kbs = Number(data.tx_kbs) || 0
       const ping = Number(data.ping) || 0
+      const label = data.label || 'OCI • E2.1.Micro'
+      const mode = data.mode || 'agent'
 
       if (cpu > 85 || ram > 90) {
         return {
@@ -348,7 +353,9 @@ Page(
           cpu, ram, swap, disk, rx_kbs, tx_kbs, ping,
           uptime: data.uptime || '--',
           ram_mb: data.ram_mb || '--',
-          top: data.top || '--'
+          top: data.top || '--',
+          label,
+          mode
         }
       }
 
@@ -360,7 +367,9 @@ Page(
           cpu, ram, swap, disk, rx_kbs, tx_kbs, ping,
           uptime: data.uptime || '--',
           ram_mb: data.ram_mb || '--',
-          top: data.top || '--'
+          top: data.top || '--',
+          label,
+          mode
         }
       }
 
@@ -371,7 +380,9 @@ Page(
         cpu, ram, swap, disk, rx_kbs, tx_kbs, ping,
         uptime: data.uptime || '--',
         ram_mb: data.ram_mb || '--',
-        top: data.top || '--'
+        top: data.top || '--',
+        label,
+        mode
       }
     },
 
@@ -404,17 +415,18 @@ Page(
         color: COLOR_SWAP
       })
 
-      // 4. Textos Laterais
+      // 4. Textos Laterais (Adapta rótulo quando em modo Zero-Install HTTP Ping)
+      const isPingMode = st.mode === 'http_ping'
       this.state.cpuSideText.setProperty(prop.MORE, {
-        text: `CPU\n${st.cpu}%`,
+        text: isPingMode ? `LOAD\n${st.cpu}%` : `CPU\n${st.cpu}%`,
         color: cpuColor
       })
       this.state.ramSideText.setProperty(prop.MORE, {
-        text: `RAM\n${st.ram}%`,
+        text: isPingMode ? `HTTP\nOK` : `RAM\n${st.ram}%`,
         color: ramColor
       })
       this.state.swapSideText.setProperty(prop.MORE, {
-        text: `SWP\n${st.swap}%`,
+        text: isPingMode ? `RTT\n${st.ping}` : `SWP\n${st.swap}%`,
         color: COLOR_SWAP
       })
 
@@ -427,7 +439,9 @@ Page(
       })
 
       this.state.netPingTextWidget.setProperty(prop.MORE, {
-        text: `PING ${st.ping}ms  •  ↓${st.rx_kbs} ↑${st.tx_kbs} KB/s`
+        text: isPingMode
+          ? `PING ${st.ping}ms  •  ZERO-INSTALL`
+          : `PING ${st.ping}ms  •  ↓${st.rx_kbs} ↑${st.tx_kbs} KB/s`
       })
 
       // 6. Painel Inferior
@@ -437,11 +451,17 @@ Page(
       })
 
       this.state.primaryMetricsWidget.setProperty(prop.MORE, {
-        text: `RAM: ${st.ram_mb}  •  DISK: ${st.disk}%`
+        text: isPingMode
+          ? `STATUS: ${st.ram_mb}  •  SLA: ${st.disk}%`
+          : `RAM: ${st.ram_mb}  •  DISK: ${st.disk}%`
       })
 
       this.state.topProcTextWidget.setProperty(prop.MORE, {
-        text: `🔥 TOP: ${st.top}`
+        text: isPingMode ? `🌐 ${st.top}` : `🔥 TOP: ${st.top}`
+      })
+
+      this.state.footerLabelWidget.setProperty(prop.MORE, {
+        text: st.label
       })
     },
 

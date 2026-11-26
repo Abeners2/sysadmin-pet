@@ -5,12 +5,12 @@
     "appName": "SysAdmin Pet",
     "appType": "app",
     "version": {
-      "code": 1,
-      "name": "1.0.0"
+      "code": 2,
+      "name": "2.1.0"
     },
     "icon": "icon.png",
     "vender": "SysAdmin",
-    "description": "Tamagotchi monitor de recursos OCI"
+    "description": "Real-time Linux & HTTP Server Telemetry Tamagotchi HUD"
   },
   "permissions": [
     "device:os.bg_service",
@@ -33,6 +33,9 @@
         },
         "app-side": {
           "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
         }
       },
       "platforms": [
@@ -46,6 +49,9 @@
   },
   "i18n": {
     "en-US": {
+      "appName": "SysAdmin Pet"
+    },
+    "pt-BR": {
       "appName": "SysAdmin Pet"
     }
   },

@@ -16,9 +16,11 @@ flowchart LR
         APP --> NGINX
     end
 
-    subgraph WATCH["Wearable NOC Client"]
-        SIDE["Zepp OS App-Side Service\nRTT Latency Calculation"]
-        HUD["Amazfit T-Rex 3 HUD\nZen / Working / Panic / Offline"]
+    subgraph WATCH["Wearable NOC Client (Zepp OS v3+)"]
+        SETTINGS["Zepp Phone Settings UI (setting/index.js)\nURL / Mode / API Key / Demo"]
+        SIDE["Zepp OS App-Side Service\nMulti-Mode: Agent · HTTP Ping · Netdata · Demo"]
+        HUD["Amazfit T-Rex 3 HUD (480x480)\nZen / Working / Panic / Offline"]
+        SETTINGS --> SIDE
         SIDE --> HUD
     end
 
@@ -47,11 +49,26 @@ The target OCI Always Free instance (`VM.Standard.E2.1.Micro`) has only **1 GB o
 - **Optional API Key Authentication:** Set `SYSADMIN_PET_API_KEY` (via `.env.local` / `app-side/config.js`) to require an `X-API-Key` header on `/health` and `/metrics`.
 - **No Secrets in Git:** Real server IPs and SSH paths are kept in gitignored `.env.local` and `app-side/config.js`.
 
+### 3. Zepp App Store Multi-Mode Support (`setting/index.js`)
+To allow any user downloading **SysAdmin Pet** from the Zepp App Store to use it immediately without editing code or compiling locally, the app includes a native **Zepp Mobile Settings UI** (`setting/index.js`) supporting 4 telemetry modes:
+1. **Auto-Detect / Full Linux Agent (`/health`):** Connects to `oci_agent.py` (or the 1-line installer `oci-agent/install-agent.sh`) for full `CPU`, `RAM`, `Swap`, `Disk`, `Network RX/TX`, `Uptime`, and `Top Memory Process` telemetry.
+2. **Zero-Install Website / API Ping (`http_ping`):** Works with **any public HTTP/HTTPS URL** without installing anything on the server. Measures HTTP response status and RTT latency (`ms`), dynamically driving the Tamagotchi state (`<250ms` Zen, `250–800ms` Working, `>800ms` Panic, timeout/5xx Offline).
+3. **Native Netdata Mode (`netdata`):** Connects directly to an existing Netdata instance (`/api/v1/data?chart=system.cpu`).
+4. **Interactive Store Demo Mode (`demo`):** Automatically activates when no server URL is configured yet, cycling through realistic server workloads (`Zen → Working → Panic → Zen`) so first-time users and Zepp Store reviewers see the animated HUD working out-of-the-box.
+
 ---
 
 ## Quick Start
 
-### 1. Configure Local Credentials (Gitignored)
+### Option A: 1-Line Standalone Linux Agent (For Any VPS User)
+If you installed **SysAdmin Pet** from the Zepp App Store and want full Linux telemetry on any Ubuntu/Debian VPS without cloning the full repository:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abeners2/sysadmin-pet/main/oci-agent/install-agent.sh | sudo bash
+```
+Then open the **Zepp Mobile App → SysAdmin Pet → Settings (⚙️)** and paste your server URL (`http://YOUR_SERVER_IP:8080/health`).
+
+### Option B: Developer Setup & OCI Deployment
+#### 1. Configure Local Credentials (Gitignored)
 ```powershell
 Copy-Item .env.example .env.local
 Copy-Item app-side/config.example.js app-side/config.js

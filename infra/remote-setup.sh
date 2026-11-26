@@ -89,6 +89,9 @@ if ! command -v zeus >/dev/null 2>&1; then
 fi
 
 cd ~/sysadmin-pet
+if [ ! -f app-side/config.js ]; then
+    cp app-side/config.example.js app-side/config.js
+fi
 npm install --no-audit --no-fund
 
 echo "--> [5/6] Gerando 24 Sprites Animados (Cyber-Bot Tamagotchi) para o Amazfit T-Rex 3..."
